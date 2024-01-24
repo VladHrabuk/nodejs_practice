@@ -2,12 +2,9 @@ console.log("Logger is initialized!");
 
 function logger(moduleName) {
   return {
-    info: (message) => console.log(`${moduleName}: ${message}`),
-    warn: (message) => console.warn(`${moduleName}: ${message}`),
-    error: (message) => {
-      console.error(`${moduleName}: ${message}`);
-      process.exit(1);
-    },
+    info: (...args) => console.log(`${moduleName}:`, ...args),
+    warn: (...args) => console.warn(`${moduleName}:`, ...args),
+    error: (...args) => console.error(`${moduleName}:`, ...args),
   };
 }
 
