@@ -25,7 +25,7 @@ async function synchronizeDirectories(sourceDir, targetDir) {
           const stats = await fs.stat(sourcePath);
           if (stats.isFile()) {
             await copyFile(sourcePath, targetPath);
-          } else if (stats.isDirectory()) {
+          } else {
             await fs.mkdir(targetPath, { recursive: true });
           }
         } catch (error) {
