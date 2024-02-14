@@ -70,5 +70,5 @@ function logger(moduleName) {
   };
 }
 
-console.log(config);
+// console.log(config);
 module.exports = logger;
