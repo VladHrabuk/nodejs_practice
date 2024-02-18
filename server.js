@@ -1,13 +1,16 @@
 require("dotenv").config();
+const config = require("config");
 const http = require("http");
 const logger = require("./utils/logger")("server");
 
-const PORT = 3500;
+const { port: serverPort } = config.server;
 const server = http.createServer();
+server.listen(serverPort);
 
-server.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+server.on("listening", () =>
+  logger.info(`Server listening on [${serverPort}] port`)
+);
+server.on("request", (req) => logger.info(req.method, req.url));
 
 server.on("request", (req, res) => {
   if (req.method === "GET" && req.url === "/healthcheck") {

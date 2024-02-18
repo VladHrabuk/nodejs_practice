@@ -8,7 +8,7 @@
     "start:dev": "nodemon ./main.js",
     "start:server": "nodemon ./server.js",
     "debug": "node --inspect-brk ./main.js",
-    "debug:server": "node --inspect ./server.js"
+    "debug:server": "nodemon --inspect ./server.js"
   },
   "author": "",
   "license": "ISC",

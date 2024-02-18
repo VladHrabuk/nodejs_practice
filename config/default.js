@@ -4,8 +4,11 @@ const logLevel = process.env.LOG_LEVEL || "warn";
 module.exports = {
   colorEnabled,
   logLevel,
-  env: {
+  logger: {
     color_enabled: process.env.COLORS_ENABLED,
     log_level: process.env.LOG_LEVEL,
+  },
+  server: {
+    port: process.env.PORT || 3000,
   },
 };
