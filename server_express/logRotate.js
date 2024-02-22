@@ -6,7 +6,7 @@ function morganLogger() {
   const logStream = rfs.createStream("server_express.log", {
     path: path.join(__dirname, "logs"),
     size: "1M",
-    interval: "1h",
+    interval: "1d",
     rotate: 1,
   });
   return morgan(

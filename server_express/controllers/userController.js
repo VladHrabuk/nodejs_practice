@@ -1,24 +1,24 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
 
 let users = [];
 
-function loadUsers() {
+async function loadUsers() {
   try {
-    const data = fs.readFileSync(path.join(__dirname, "..", "users.json"));
+    const data = await fs.readFile(path.join(__dirname, "..", "users.json"));
     users = JSON.parse(data);
+    console.log(users, "loadUsers");
   } catch (err) {
     console.error("Error loading users:", err);
   }
 }
 
-function saveUsers() {
+async function saveUsers() {
   try {
-    fs.writeFileSync(
+    await fs.writeFile(
       path.join(__dirname, "..", "users.json"),
       JSON.stringify(users, null, 2)
     );
-    console.log("Users data saved successfully");
   } catch (err) {
     console.error("Error saving users:", err);
   }
@@ -28,8 +28,16 @@ function getAllUsers() {
   return users;
 }
 
+function addUser(newUser) {
+  const userId = users.length + 1;
+  const userWithId = { ...newUser, id: userId };
+  users.push(userWithId);
+  console.log(users);
+}
+
 module.exports = {
   loadUsers,
   saveUsers,
   getAllUsers,
+  addUser,
 };

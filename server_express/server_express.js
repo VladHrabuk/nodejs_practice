@@ -8,21 +8,29 @@ const { router: userRouter } = require("./routes/users");
 
 const server = express();
 
+loadUsers();
+
 server.use(express.json());
 server.use(morganLogger());
 server.use("/users", userRouter);
 
 const { port: serverPort } = config.server;
-server.listen(serverPort, () => {
+const serverInstance = server.listen(serverPort, () => {
   console.log(`Server listening on [${serverPort}] port`);
 });
 
-loadUsers();
-
-process.on("beforeExit", () => {
-  saveUsers();
+process.on("SIGINT", async () => {
+  await saveAndShutdown();
 });
 
-// server.get("/healthcheck", (req, resp) => {
-//   resp.send("healthceck is passed");
-// });
+async function saveAndShutdown() {
+  await saveUsers();
+  serverInstance.close((error) => {
+    if (error) {
+      console.error(error);
+      process.exit(1);
+    }
+    console.log("Server shut down gracefully!");
+    process.exit(0);
+  });
+}
