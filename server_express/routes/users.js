@@ -12,11 +12,11 @@ const CustomError = require("../utils/customError");
 
 const router = express.Router();
 
-router.post("/", bodyValidator, async (req, res) => {
+router.post("/", bodyValidator, (req, res) => {
   const { username, email } = req.body;
   const newUser = { username, email };
-  addUser(newUser);
-  res.status(200).json(newUser);
+  const userWithId = addUser(newUser);
+  res.status(201).json(userWithId);
 });
 
 router.get("/", (req, res) => {
@@ -27,9 +27,9 @@ router.get("/", (req, res) => {
 router.get(
   "/:userId",
   userIdValidator,
-  tryCatch(async (req, res) => {
+  tryCatch((req, res) => {
     const { userId } = req.params;
-    const user = await findUser(userId);
+    const user = findUser(userId);
     if (!user) {
       throw new CustomError("User not found!", 404);
     }
@@ -40,9 +40,9 @@ router.get(
 router.delete(
   "/:userId",
   userIdValidator,
-  tryCatch(async (req, res) => {
+  tryCatch((req, res) => {
     const { userId } = req.params;
-    const deletedUser = await deleteUser(userId);
+    const deletedUser = deleteUser(userId);
     if (!deletedUser) {
       throw new CustomError("User not found!", 404);
     }

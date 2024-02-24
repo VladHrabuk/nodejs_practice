@@ -1,6 +1,4 @@
 const yup = require("yup");
-const customError = require("../utils/customError");
-const { tryCatch } = require("../middlewares/errorHandler");
 
 async function userIdValidator(req, res, next) {
   const { userId } = req.params;

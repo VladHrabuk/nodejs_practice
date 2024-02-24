@@ -37,25 +37,17 @@ function addUser(newUser) {
   userIdCounter++;
   const userWithId = { id: userIdCounter, ...newUser };
   users.push(userWithId);
+  return userWithId;
 }
 
-async function findUser(userId) {
-  try {
-    const user = await users.find((user) => user.id === parseInt(userId));
-    return user;
-  } catch (err) {
-    return null;
-  }
+function findUser(userId) {
+  return users.find((user) => user.id === parseInt(userId));
 }
 
-async function deleteUser(userId) {
-  try {
-    const deletedUser = users.find((user) => user.id === parseInt(userId));
-    users = users.filter((user) => user.id !== parseInt(userId));
-    return deletedUser;
-  } catch (err) {
-    return null;
-  }
+function deleteUser(userId) {
+  const userIndex = users.findIndex((user) => user.id === parseInt(userId));
+  if (userIndex === -1) return null;
+  return users.splice(userIndex, 1)[0];
 }
 
 module.exports = {

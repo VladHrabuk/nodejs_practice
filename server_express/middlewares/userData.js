@@ -9,11 +9,12 @@ async function bodyValidator(req, res, next) {
   });
 
   try {
-    const data = await userSchema.validate(body);
+    const data = await userSchema.validate(body, { abortEarly: false });
     req.body = data;
     next();
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    const errors = err.inner.map((e) => e.message);
+    res.status(400).json({ errors });
   }
 }
 
