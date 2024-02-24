@@ -6,24 +6,24 @@ function morganLogger() {
   const logStream = rfs.createStream("server_express.log", {
     path: path.join(__dirname, "logs"),
     size: "1M",
-    interval: "1d",
+    interval: "1h",
     rotate: 1,
   });
-  return morgan(
-    (tokens, req, res) => {
-      const logMessage = [
-        tokens.method(req, res),
-        tokens.url(req, res),
-        tokens.status(req, res),
-      ].join(" ");
-      console.log(logMessage);
-      return logMessage;
-    },
-    {
-      stream: logStream,
-      skip: (_req, res) => res.statusCode > 400,
+  const loggerMiddleware = morgan((tokens, req, res) => {
+    const logMessage = [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+    ].join(" ");
+
+    if (res.statusCode < 400) {
+      logStream.write(logMessage + "\n");
     }
-  );
+
+    return logMessage;
+  });
+
+  return loggerMiddleware;
 }
 
 module.exports = { morganLogger };

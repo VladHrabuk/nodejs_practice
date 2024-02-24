@@ -1,13 +1,18 @@
 const fs = require("fs").promises;
+const fsSync = require("fs");
+
 const path = require("path");
 
 let users = [];
+let userIdCounter = 0;
 
-async function loadUsers() {
+function loadUsers() {
   try {
-    const data = await fs.readFile(path.join(__dirname, "..", "users.json"));
+    const data = fsSync.readFileSync(path.join(__dirname, "..", "users.json"));
     users = JSON.parse(data);
-    console.log(users, "loadUsers");
+    if (users.length > 0) {
+      userIdCounter = users[users.length - 1].id;
+    }
   } catch (err) {
     console.error("Error loading users:", err);
   }
@@ -29,10 +34,28 @@ function getAllUsers() {
 }
 
 function addUser(newUser) {
-  const userId = users.length + 1;
-  const userWithId = { ...newUser, id: userId };
+  userIdCounter++;
+  const userWithId = { id: userIdCounter, ...newUser };
   users.push(userWithId);
-  console.log(users);
+}
+
+async function findUser(userId) {
+  try {
+    const user = await users.find((user) => user.id === parseInt(userId));
+    return user;
+  } catch (err) {
+    return null;
+  }
+}
+
+async function deleteUser(userId) {
+  try {
+    const deletedUser = users.find((user) => user.id === parseInt(userId));
+    users = users.filter((user) => user.id !== parseInt(userId));
+    return deletedUser;
+  } catch (err) {
+    return null;
+  }
 }
 
 module.exports = {
@@ -40,4 +63,6 @@ module.exports = {
   saveUsers,
   getAllUsers,
   addUser,
+  findUser,
+  deleteUser,
 };
