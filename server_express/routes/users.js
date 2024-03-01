@@ -1,10 +1,11 @@
 const express = require("express");
+const { storage } = require("config");
 const {
   getAllUsers,
   addUser,
   findUser,
   deleteUser,
-} = require("../controllers/userController");
+} = require(`../controllers/userController_${storage.type}`);
 const bodyValidator = require("../middlewares/userData");
 const userIdValidator = require("../middlewares/userId");
 const { tryCatch } = require("../middlewares/errorHandler");
@@ -12,24 +13,29 @@ const CustomError = require("../utils/customError");
 
 const router = express.Router();
 
-router.post("/", bodyValidator, (req, res) => {
-  const { username, email } = req.body;
-  const newUser = { username, email };
-  const userWithId = addUser(newUser);
-  res.status(201).json(userWithId);
+router.post("/", bodyValidator, async (req, res) => {
+  try {
+    const { username, email } = req.body;
+    const newUser = { username, email };
+    const userWithId = await addUser(newUser);
+    res.status(201).json(userWithId);
+  } catch (error) {
+    console.error("Error adding user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
-router.get("/", (req, res) => {
-  const users = getAllUsers();
+router.get("/", async (req, res) => {
+  const users = await getAllUsers();
   res.status(200).json(users);
 });
 
 router.get(
   "/:userId",
   userIdValidator,
-  tryCatch((req, res) => {
+  tryCatch(async (req, res) => {
     const { userId } = req.params;
-    const user = findUser(userId);
+    const user = await findUser(userId);
     if (!user) {
       throw new CustomError("User not found!", 404);
     }
@@ -40,9 +46,9 @@ router.get(
 router.delete(
   "/:userId",
   userIdValidator,
-  tryCatch((req, res) => {
+  tryCatch(async (req, res) => {
     const { userId } = req.params;
-    const deletedUser = deleteUser(userId);
+    const deletedUser = await deleteUser(userId);
     if (!deletedUser) {
       throw new CustomError("User not found!", 404);
     }

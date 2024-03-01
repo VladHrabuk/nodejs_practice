@@ -3,14 +3,16 @@ const config = require("config");
 const express = require("express");
 
 const { morganLogger } = require("./logRotate");
-const { loadUsers, saveUsers } = require("./controllers/userController");
 const { router: userRouter } = require("./routes/users");
 const CustomError = require("./utils/customError");
 const { handleErrors } = require("./middlewares/errorHandler");
+const storageType = config.storage.type;
+if (storageType === "array") {
+  const { loadUsers } = require("./controllers/userController_array");
+  loadUsers();
+}
 
 const server = express();
-
-loadUsers();
 
 server.use(express.json());
 server.use(morganLogger());
@@ -36,7 +38,10 @@ process.on("SIGINT", async () => {
 });
 
 async function saveAndShutdown() {
-  await saveUsers();
+  if (config.storage.type === "array") {
+    const { saveUsers } = require("./controllers/userController_array");
+    await saveUsers();
+  }
   serverInstance.close((error) => {
     if (error) {
       console.error(error);

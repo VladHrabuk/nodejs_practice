@@ -50,6 +50,15 @@ function deleteUser(userId) {
   return users.splice(userIndex, 1)[0];
 }
 
+async function findUserByEmail(email) {
+  for (const user of users) {
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+}
+
 module.exports = {
   loadUsers,
   saveUsers,
@@ -57,4 +66,5 @@ module.exports = {
   addUser,
   findUser,
   deleteUser,
+  findUserByEmail,
 };
