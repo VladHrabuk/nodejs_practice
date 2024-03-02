@@ -8,8 +8,7 @@ const CustomError = require("./utils/customError");
 const { handleErrors } = require("./middlewares/errorHandler");
 const storageType = config.storage.type;
 if (storageType === "array") {
-  const { loadUsers } = require("./controllers/userController_array");
-  loadUsers();
+  require("./controllers/userController_array");
 }
 
 const server = express();
@@ -33,21 +32,13 @@ const serverInstance = server.listen(serverPort, () => {
   console.log(`Server listening on [${serverPort}] port!`);
 });
 
-process.on("SIGINT", async () => {
-  await saveAndShutdown();
-});
-
-async function saveAndShutdown() {
-  if (config.storage.type === "array") {
-    const { saveUsers } = require("./controllers/userController_array");
-    await saveUsers();
-  }
-  serverInstance.close((error) => {
-    if (error) {
-      console.error(error);
-      process.exit(1);
-    }
-    console.log("Server shut down gracefully!");
-    process.exit(0);
-  });
-}
+// process.on("SIGINT", () => {
+//   serverInstance.close((error) => {
+//     if (error) {
+//       console.error(error);
+//       process.exit(1);
+//     }
+//     console.log("Server shut down gracefully!");
+//     process.exit(0);
+//   });
+// });
