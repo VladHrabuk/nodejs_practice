@@ -21,14 +21,9 @@ async function deleteUser(userId) {
   return knex.select().from("users").where({ id: userId }).del();
 }
 
-async function findUserByEmail(email) {
-  return knex.select().from("users").where({ email }).first();
-}
-
 module.exports = {
   getAllUsers,
   addUser,
   findUser,
   deleteUser,
-  findUserByEmail,
 };

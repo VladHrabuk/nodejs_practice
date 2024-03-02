@@ -20,8 +20,12 @@ router.post("/", bodyValidator, async (req, res) => {
     const userWithId = await addUser(newUser);
     res.status(201).json(userWithId);
   } catch (error) {
-    console.error("Error adding user:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    if (error.code === "SQLITE_CONSTRAINT_UNIQUE") {
+      res.status(400).json({ message: "Email already exists" });
+    } else {
+      console.error("Error adding user:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 });
 

@@ -1,6 +1,5 @@
 const fs = require("fs").promises;
 const fsSync = require("fs");
-
 const path = require("path");
 
 let users = [];
@@ -17,6 +16,8 @@ function loadUsers() {
     console.error("Error loading users:", err);
   }
 }
+
+loadUsers();
 
 async function saveUsers() {
   try {
@@ -50,14 +51,9 @@ function deleteUser(userId) {
   return users.splice(userIndex, 1)[0];
 }
 
-async function findUserByEmail(email) {
-  for (const user of users) {
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return null;
-}
+process.on("SIGINT", async () => {
+  await saveUsers();
+});
 
 module.exports = {
   loadUsers,
@@ -66,5 +62,4 @@ module.exports = {
   addUser,
   findUser,
   deleteUser,
-  findUserByEmail,
 };
